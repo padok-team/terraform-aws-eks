@@ -1,1 +1,157 @@
-# terraform-repository-example
+# AWS EKS Terraform module
+
+Terraform module which creates EKS resources on AWS. This module is an abstraction of the [terraform-aws-modules/eks/aws](https://registry.terraform.io/modules/terraform-aws-modules/eks/aws/latest) by [@brandoconnor](https://registry.terraform.io/namespaces/brandoconnor).
+
+## User Stories for this module
+
+- AAOps I can deploy a simple HA cluster with filtered public access
+- AAOps I can deploy a simple HA cluster with only private access
+- AAOps I can deploy a HA cluster with different node pools with labels and taints
+
+## Usage
+
+```hcl
+terraform {
+  required_version = ">= 1.0.0"
+
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = ">= 3.63"
+    }
+  }
+}
+
+provider "aws" {
+  region = local.region
+
+  default_tags {
+    tags = {
+      Env         = local.env
+      Region      = local.region
+      OwnedBy     = "Padok"
+      ManagedByTF = true
+    }
+  }
+}
+
+# some variables to make life easier
+locals {
+
+  name   = "my_cluster"
+  env    = "staging"
+  region = "eu-west-3"
+}
+
+# a basic example with a public EKS endpoint
+module "my_eks" {
+  source = "git@github.com:padok-team/terraform-aws-eks.git"
+
+  env                                  = local.env
+  region                               = local.region
+  cluster_name                         = local.name # cluster name result will be => ${local.name}_${local.env}
+  cluster_version                      = "1.21"
+  service_ipv4_cidr                    = "10.143.0.0/16"
+  vpc_id                               = module.my_vpc.vpc_id
+  subnets                              = module.my_vpc.private_subnets_id
+  cluster_endpoint_public_access       = true                 # private access is enable by default
+  cluster_endpoint_public_access_cidrs = # restrict to your public IP, need to provide a list
+
+  node_groups = {
+    app = {
+      desired_capacity = 1
+      max_capacity     = 5
+      min_capacity     = 1
+      instance_types   = ["t3a.medium"]
+    }
+  }
+
+  tags = {
+    CostCenter = "EKS"
+  }
+
+  # ⚠️ Very important note ⚠️
+  # force dependency on vpc because we need natgateway & route table to be up before
+  # starting our node pool because without appriopriate route, node can't talk
+  # to AWS API and can't auht on EKS API Server
+  depends_on = [
+    module.my_vpc
+  ]
+}
+
+################################################################################
+# Supporting resources
+################################################################################
+
+module "my_vpc" {
+  source = "git@github.com:padok-team/terraform-aws-network.git"
+
+  vpc_name              = local.name
+  vpc_availability_zone = ["eu-west-3a", "eu-west-3b"]
+
+  vpc_cidr            = "10.142.0.0/16"
+  public_subnet_cidr  = ["10.142.1.0/28", "10.142.2.0/28"]    # small subnets for natgateway
+  private_subnet_cidr = ["10.142.64.0/18", "10.142.128.0/18"] # big subnet for EKS
+
+  private_subnet_tags = {
+    "kubernetes.io/cluster/${local.name}_${local.env}" = "shared"
+    "kubernetes.io/role/elb"                           = "1"
+  }
+
+  tags = {
+    CostCenter = "Network"
+  }
+}
+```
+
+## Examples
+
+- [A HA Cluster with a public endpoint](examples/basic_public/main.tf)
+- [A HA Cluster with only a prvate endpoint](examples/basic_private/main.tf)
+- [A HA Cluster with labels and taints on nodes](examples/labels_taints/main.tf)
+- [Use spot instance for my nodes with custom SSH Key](examples/spot_nodes/main.tf)
+
+<!-- BEGIN_TF_DOCS -->
+## Modules
+
+| Name | Source | Version |
+|------|--------|---------|
+| <a name="module_eks"></a> [eks](#module\_eks) | terraform-aws-modules/eks/aws | 17.22.0 |
+
+## Inputs
+
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name) | Name of the EKS cluster | `string` | n/a | yes |
+| <a name="input_cluster_version"></a> [cluster\_version](#input\_cluster\_version) | EKS version | `string` | n/a | yes |
+| <a name="input_env"></a> [env](#input\_env) | Environment name | `string` | n/a | yes |
+| <a name="input_region"></a> [region](#input\_region) | AWS region name | `string` | n/a | yes |
+| <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | VPC ID for EKS | `string` | n/a | yes |
+| <a name="input_cluster_enabled_log_types"></a> [cluster\_enabled\_log\_types](#input\_cluster\_enabled\_log\_types) | A list of the desired control plane logging to enable. For more information, see Amazon EKS Control Plane Logging documentation (https://docs.aws.amazon.com/eks/latest/userguide/control-plane-logs.html) | `list(string)` | <pre>[<br>  "api",<br>  "audit",<br>  "authenticator",<br>  "controllerManager",<br>  "scheduler"<br>]</pre> | no |
+| <a name="input_cluster_endpoint_private_access"></a> [cluster\_endpoint\_private\_access](#input\_cluster\_endpoint\_private\_access) | Enable API Server private endpoint | `bool` | `true` | no |
+| <a name="input_cluster_endpoint_public_access"></a> [cluster\_endpoint\_public\_access](#input\_cluster\_endpoint\_public\_access) | Enable API Server public endpoint | `bool` | `false` | no |
+| <a name="input_cluster_endpoint_public_access_cidrs"></a> [cluster\_endpoint\_public\_access\_cidrs](#input\_cluster\_endpoint\_public\_access\_cidrs) | List of CIDR blocks which can access the Amazon EKS public API server endpoint. | `list(string)` | <pre>[<br>  "192.168.0.1/32"<br>]</pre> | no |
+| <a name="input_kms_etcd"></a> [kms\_etcd](#input\_kms\_etcd) | KMS key ARN for etcd encryption | `string` | `null` | no |
+| <a name="input_manage_aws_auth"></a> [manage\_aws\_auth](#input\_manage\_aws\_auth) | Disable creation of configmap | `bool` | `false` | no |
+| <a name="input_node_group_ami_type"></a> [node\_group\_ami\_type](#input\_node\_group\_ami\_type) | AMI type for EKS Nodes | `string` | `"AL2_x86_64"` | no |
+| <a name="input_node_group_disk_size"></a> [node\_group\_disk\_size](#input\_node\_group\_disk\_size) | EBS disk size for node group | `number` | `20` | no |
+| <a name="input_node_groups"></a> [node\_groups](#input\_node\_groups) | Map of map of node groups to create. See `node_groups` module's documentation for more details | `any` | `{}` | no |
+| <a name="input_service_ipv4_cidr"></a> [service\_ipv4\_cidr](#input\_service\_ipv4\_cidr) | service ipv4 cidr for the kubernetes cluster | `string` | `null` | no |
+| <a name="input_subnets"></a> [subnets](#input\_subnets) | A list of subnets to place the EKS cluster and workers within. | `list(string)` | `[]` | no |
+| <a name="input_tags"></a> [tags](#input\_tags) | A map of tags to add to all resources. Tags added to launch configuration or templates override these values for ASG Tags only. | `map(string)` | `{}` | no |
+| <a name="input_write_kubeconfig"></a> [write\_kubeconfig](#input\_write\_kubeconfig) | Whether to write a Kubectl config file containing the cluster configuration. Saved to `kubeconfig_output_path`. | `bool` | `false` | no |
+
+<!-- END_TF_DOCS -->
+
+### Inputs for node_groups
+
+[All options available in the sub module](https://github.com/terraform-aws-modules/terraform-aws-eks/tree/master/modules/node_groups)
+
+## Outputs
+
+Ouputs are the same than [terraform-aws-modules/eks/aws](https://registry.terraform.io/modules/terraform-aws-modules/eks/aws/latest) module.
+
+## Next steps
+
+  - An example with encrypted EBS
+  - An example with custom AMI
