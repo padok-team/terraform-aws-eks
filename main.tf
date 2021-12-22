@@ -25,6 +25,7 @@ module "eks" {
   # security groups
   cluster_create_security_group = var.cluster_security_group_id == "" ? true : false
   cluster_security_group_id = var.cluster_security_group_id
+  
   worker_additional_security_group_ids = var.worker_additional_security_group_ids
   # endpoint config
   cluster_endpoint_private_access = var.cluster_endpoint_private_access
