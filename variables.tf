@@ -99,7 +99,7 @@ variable "node_group_ami_type" {
 
 variable "node_group_ami_id" {
   type        = string
-  default     = ""
+  default     = null
   description = "ID of the AMI to use on the EKS Nodes"
 }
 variable "node_group_disk_size" {
@@ -110,7 +110,7 @@ variable "node_group_disk_size" {
 
 variable "node_group_iam_role_arn" {
   type        = string
-  default     = ""
+  default     = null
   description = "IAM role ARN for workers"
 }
 variable "node_groups" {
