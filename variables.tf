@@ -73,16 +73,15 @@ variable "service_ipv4_cidr" {
 ### security groups
 
 variable "cluster_security_group_id" {
-  type = string
+  type        = string
   description = "If provided, the EKS cluster will be attached to this security group. If not given, a security group will be created with necessary ingress/egress to work with the workers"
-  default = ""
+  default     = ""
 }
 
 variable "worker_additional_security_group_ids" {
-  type = list(string)
+  type        = list(string)
   description = "A list of additional security group ids to attach to worker instances	"
-  default = []
-  
+  default     = []
 }
 #### secret encryption
 variable "kms_etcd" {

@@ -24,8 +24,8 @@ module "eks" {
 
   # security groups
   cluster_create_security_group = var.cluster_security_group_id == "" ? true : false
-  cluster_security_group_id = var.cluster_security_group_id
-  
+  cluster_security_group_id     = var.cluster_security_group_id
+
   worker_additional_security_group_ids = var.worker_additional_security_group_ids
   # endpoint config
   cluster_endpoint_private_access = var.cluster_endpoint_private_access
@@ -42,8 +42,8 @@ module "eks" {
   # Managed Node Groups
 
   manage_worker_iam_resources = var.manage_worker_iam_resources
-  node_groups_defaults = local.node_groups_defaults
-  node_groups = var.node_groups
+  node_groups_defaults        = local.node_groups_defaults
+  node_groups                 = var.node_groups
 
   # aws auth & kubeconfig
   manage_aws_auth  = false
@@ -71,9 +71,9 @@ resource "aws_kms_key" "eks" {
 
 locals {
   node_groups_defaults = merge({
-    ami_type     = var.node_group_ami_type
-    disk_size    = var.node_group_disk_size
-  },
-   var.node_group_iam_role_arn == "" ? {} : { iam_role_arn = var.node_group_iam_role_arn },
-   var.node_group_ami_id == "" ? {} : { ami_id = var.node_group_ami_id })
+    ami_type  = var.node_group_ami_type
+    disk_size = var.node_group_disk_size
+    },
+    var.node_group_iam_role_arn == "" ? {} : { iam_role_arn = var.node_group_iam_role_arn },
+  var.node_group_ami_id == "" ? {} : { ami_id = var.node_group_ami_id })
 }
