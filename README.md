@@ -45,7 +45,7 @@ locals {
 
 # a basic example with a public EKS endpoint
 module "my_eks" {
-  source = "git@github.com:padok-team/terraform-aws-eks.git"
+  source = "git@github.com:padok-team/terraform-aws-eks.git?ref=v0.1.0"
 
   env                                  = local.env
   region                               = local.region
@@ -84,7 +84,7 @@ module "my_eks" {
 ################################################################################
 
 module "my_vpc" {
-  source = "git@github.com:padok-team/terraform-aws-network.git"
+  source = "git@github.com:padok-team/terraform-aws-network.git?ref=0.1.0"
 
   vpc_name              = local.name
   vpc_availability_zone = ["eu-west-3a", "eu-west-3b"]
