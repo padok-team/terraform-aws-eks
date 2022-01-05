@@ -23,7 +23,7 @@ module "eks" {
   cluster_endpoint_public_access_cidrs = var.cluster_endpoint_public_access_cidrs
 
   # security groups
-  cluster_create_security_group = var.cluster_security_group_id == "" ? true : false
+  cluster_create_security_group = var.cluster_create_security_group
   cluster_security_group_id     = var.cluster_security_group_id
 
   worker_additional_security_group_ids = var.worker_additional_security_group_ids
@@ -74,6 +74,6 @@ locals {
     ami_type  = var.node_group_ami_type
     disk_size = var.node_group_disk_size
     },
-    var.node_group_iam_role_arn ? {} : { iam_role_arn = var.node_group_iam_role_arn },
-  var.node_group_ami_id  ? {} : { ami_id = var.node_group_ami_id })
+    var.node_group_iam_role_arn == null ? {} : { iam_role_arn = var.node_group_iam_role_arn },
+  var.node_group_ami_id == null ? {} : { ami_id = var.node_group_ami_id })
 }

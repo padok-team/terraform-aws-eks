@@ -72,6 +72,13 @@ variable "service_ipv4_cidr" {
 
 ### security groups
 
+variable "cluster_create_security_group" {
+  type = bool
+  description = "Indicate wether a new security group must be created or not"
+  default = true
+  
+}
+
 variable "cluster_security_group_id" {
   type        = string
   description = "If provided, the EKS cluster will be attached to this security group. If not given, a security group will be created with necessary ingress/egress to work with the workers"
