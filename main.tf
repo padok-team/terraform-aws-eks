@@ -75,5 +75,6 @@ locals {
     disk_size = var.node_group_disk_size
     },
     var.node_group_iam_role_arn == null ? {} : { iam_role_arn = var.node_group_iam_role_arn },
-  var.node_group_ami_id == null ? {} : { ami_id = var.node_group_ami_id })
+    var.node_group_ami_id == null ? {} : { ami_id = var.node_group_ami_id, create_launch_template = true },
+  var.node_group_ami_type == null ? {} : { ami_type = var.node_group_ami_type })
 }

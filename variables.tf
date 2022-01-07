@@ -73,10 +73,10 @@ variable "service_ipv4_cidr" {
 ### security groups
 
 variable "cluster_create_security_group" {
-  type = bool
+  type        = bool
   description = "Indicate wether a new security group must be created or not"
-  default = true
-  
+  default     = true
+
 }
 
 variable "cluster_security_group_id" {
@@ -100,7 +100,7 @@ variable "kms_etcd" {
 #### node groups
 variable "node_group_ami_type" {
   type        = string
-  default     = "AL2_x86_64"
+  default     = null
   description = "AMI type for EKS Nodes"
 }
 
