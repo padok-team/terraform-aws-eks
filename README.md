@@ -107,17 +107,17 @@ module "my_vpc" {
 ## Examples
 
 - [A HA Cluster with a public endpoint](examples/basic_public/main.tf)
-- [A HA Cluster with only a prvate endpoint](examples/basic_private/main.tf)
+- [A HA Cluster with only a private endpoint](examples/basic_private/main.tf)
 - [A HA Cluster with labels and taints on nodes](examples/labels_taints/main.tf)
 - [Use spot instance for my nodes with custom SSH Key](examples/spot_nodes/main.tf)
-- [Use custom IAM roles for nodes and cluster](examples/custom_iam.tf)
+- [Use custom IAM roles for nodes and cluster](examples/custom_iam/main.tf)
 
 <!-- BEGIN_TF_DOCS -->
 ## Modules
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_eks"></a> [eks](#module\_eks) | terraform-aws-modules/eks/aws | 17.22.0 |
+| <a name="module_this"></a> [this](#module\_this) | terraform-aws-modules/eks/aws | 17.22.0 |
 
 ## Inputs
 
@@ -160,11 +160,6 @@ No outputs.
 ## Outputs
 
 Ouputs are the same than [terraform-aws-modules/eks/aws](https://registry.terraform.io/modules/terraform-aws-modules/eks/aws/latest) module.
-
-## Next steps
-
-  - An example with encrypted EBS
-  - An example with custom AMI
 
 ## License
 
