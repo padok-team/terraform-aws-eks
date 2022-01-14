@@ -1,52 +1,52 @@
 #### ---- ---- ---- GLOBAL ---- ---- ---- ####
 variable "env" {
-  type        = string
   description = "Environment name"
+  type        = string
 }
 variable "region" {
-  type        = string
   description = "AWS region name"
+  type        = string
 }
 
 #### ---- ---- ---- EKS ---- ---- ---- ####
 variable "cluster_name" {
-  type        = string
   description = "Name of the EKS cluster"
+  type        = string
 }
 variable "cluster_version" {
-  type        = string
   description = "EKS version"
+  type        = string
 }
 
 variable "manage_cluster_iam_resources" {
+  description = "Whether to let the module manage cluster IAM resources. If set to false, cluster_iam_role_name must be specified."
   type        = bool
   default     = true
-  description = "Whether to let the module manage cluster IAM resources. If set to false, cluster_iam_role_name must be specified."
 }
 
 variable "cluster_iam_role_name" {
+  description = "IAM role name for the cluster. If manage_cluster_iam_resources is set to false, set this to reuse an existing IAM role. If manage_cluster_iam_resources is set to true, set this to force the created role name."
   type        = string
   default     = ""
-  description = "IAM role name for the cluster. If manage_cluster_iam_resources is set to false, set this to reuse an existing IAM role. If manage_cluster_iam_resources is set to true, set this to force the created role name."
 }
 
-#### logging
+#### Logging
 variable "cluster_enabled_log_types" {
   description = "A list of the desired control plane logging to enable. For more information, see Amazon EKS Control Plane Logging documentation (https://docs.aws.amazon.com/eks/latest/userguide/control-plane-logs.html)"
   type        = list(string)
   default     = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
 }
 
-#### endpoints
+#### Endpoints
 variable "cluster_endpoint_public_access" {
+  description = "Enable API Server public endpoint"
   type        = bool
   default     = false
-  description = "Enable API Server public endpoint"
 }
 variable "cluster_endpoint_private_access" {
+  description = "Enable API Server private endpoint"
   type        = bool
   default     = true
-  description = "Enable API Server private endpoint"
 }
 variable "cluster_endpoint_public_access_cidrs" {
   description = "List of CIDR blocks which can access the Amazon EKS public API server endpoint."
@@ -54,10 +54,10 @@ variable "cluster_endpoint_public_access_cidrs" {
   default     = ["192.168.0.1/32"] # fake value because we don't want everyone access our endpoint when public is enabled
 }
 
-#### network
+#### Network
 variable "vpc_id" {
-  type        = string
   description = "VPC ID for EKS"
+  type        = string
 }
 variable "subnets" {
   description = "A list of subnets to place the EKS cluster and workers within."
@@ -65,60 +65,58 @@ variable "subnets" {
   default     = []
 }
 variable "service_ipv4_cidr" {
-  type        = string
   description = "service ipv4 cidr for the kubernetes cluster"
+  type        = string
   default     = null
 }
 
-### security groups
-
+#### Security groups
 variable "cluster_create_security_group" {
-  type        = bool
   description = "Indicate wether a new security group must be created or not"
+  type        = bool
   default     = true
-
 }
 
 variable "cluster_security_group_id" {
-  type        = string
   description = "If provided, the EKS cluster will be attached to this security group. If not given, a security group will be created with necessary ingress/egress to work with the workers"
+  type        = string
   default     = ""
 }
 
 variable "worker_additional_security_group_ids" {
-  type        = list(string)
   description = "A list of additional security group ids to attach to worker instances	"
+  type        = list(string)
   default     = []
 }
-#### secret encryption
+#### Secret encryption
 variable "kms_etcd" {
-  type        = string
   description = "KMS key ARN for etcd encryption"
+  type        = string
   default     = null
 }
 
-#### node groups
+#### Node groups
 variable "node_group_ami_type" {
+  description = "AMI type for EKS Nodes"
   type        = string
   default     = null
-  description = "AMI type for EKS Nodes"
 }
 
 variable "node_group_ami_id" {
+  description = "ID of the AMI to use on the EKS Nodes"
   type        = string
   default     = null
-  description = "ID of the AMI to use on the EKS Nodes"
 }
 variable "node_group_disk_size" {
+  description = "EBS disk size for node group"
   type        = number
   default     = 20
-  description = "EBS disk size for node group"
 }
 
 variable "node_group_iam_role_arn" {
+  description = "IAM role ARN for workers"
   type        = string
   default     = null
-  description = "IAM role ARN for workers"
 }
 variable "node_groups" {
   description = "Map of map of node groups to create. See `node_groups` module's documentation for more details"
@@ -127,12 +125,12 @@ variable "node_groups" {
 }
 
 variable "manage_worker_iam_resources" {
+  description = "Whether to let the module manage worker IAM resources. If set to false, iam_role_arn must be specified for nodes."
   type        = bool
   default     = true
-  description = "Whether to let the module manage worker IAM resources. If set to false, iam_role_arn must be specified for nodes."
 }
 
-# tags rulez the world
+#### Tags rulez the world
 variable "tags" {
   description = "A map of tags to add to all resources. Tags added to launch configuration or templates override these values for ASG Tags only."
   type        = map(string)
