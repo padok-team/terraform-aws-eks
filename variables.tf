@@ -51,7 +51,7 @@ variable "cluster_endpoint_private_access" {
 variable "cluster_endpoint_public_access_cidrs" {
   description = "List of CIDR blocks which can access the Amazon EKS public API server endpoint."
   type        = list(string)
-  default     = ["192.168.0.1/32"] # fake value because we don't want everyone access our endpoint when public is enabled
+  default     = ["0.0.0.0/0"]
 }
 
 #### Network
