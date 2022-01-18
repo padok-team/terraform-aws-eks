@@ -41,7 +41,7 @@ module "this" {
 
   # IRSA
   enable_irsa = true
-  
+
   # Managed Node Groups
   manage_worker_iam_resources = var.manage_worker_iam_resources
   node_groups_defaults        = local.node_groups_defaults
