@@ -73,10 +73,14 @@ resource "aws_kms_key" "this" {
 
 locals {
   node_groups_defaults = merge({
+
+    # Force to true to create a launch template to add worker security group to nodes
+    create_launch_template = "true"
+
     ami_type  = var.node_group_ami_type
     disk_size = var.node_group_disk_size
     },
     var.node_group_iam_role_arn == null ? {} : { iam_role_arn = var.node_group_iam_role_arn },
-    var.node_group_ami_id == null ? {} : { ami_id = var.node_group_ami_id, create_launch_template = true },
+    var.node_group_ami_id == null ? {} : { ami_id = var.node_group_ami_id },
   var.node_group_ami_type == null ? {} : { ami_type = var.node_group_ami_type })
 }
