@@ -7,7 +7,7 @@ module "this" {
   version = "17.22.0"
 
   create_eks      = true
-  cluster_name    = "${var.cluster_name}_${var.env}"
+  cluster_name    = var.cluster_name
   cluster_version = var.cluster_version
 
   manage_cluster_iam_resources = var.manage_cluster_iam_resources
