@@ -84,9 +84,9 @@ variable "cluster_security_group_id" {
 }
 
 variable "node_create_security_group" {
+  description = "Whether to create a security group for the workers or attach the workers to `worker_security_group_id`."
   type        = bool
   default     = true
-  description = "Whether to create a security group for the workers or attach the workers to `worker_security_group_id`."
 }
 
 variable "node_security_group_id" {
