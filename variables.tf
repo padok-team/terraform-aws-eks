@@ -83,11 +83,24 @@ variable "cluster_security_group_id" {
   default     = ""
 }
 
+variable "node_create_security_group" {
+  type        = bool
+  default     = true
+  description = "Whether to create a security group for the workers or attach the workers to `worker_security_group_id`."
+}
+
+variable "node_security_group_id" {
+  description = "If provided, all workers will be attached to this security group. If not given, a security group will be created with necessary ingress/egress to work with the EKS cluster."
+  type        = string
+  default     = ""
+}
+
 variable "worker_additional_security_group_ids" {
-  description = "A list of additional security group ids to attach to worker instances	"
+  description = "A list of additional security group ids to attach to worker instances."
   type        = list(string)
   default     = []
 }
+
 #### Secret encryption
 variable "kms_etcd" {
   description = "KMS key ARN for etcd encryption"

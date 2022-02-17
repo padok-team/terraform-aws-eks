@@ -43,9 +43,11 @@ module "this" {
   enable_irsa = true
 
   # Managed Node Groups
-  manage_worker_iam_resources = var.manage_worker_iam_resources
-  node_groups_defaults        = local.node_groups_defaults
-  node_groups                 = var.node_groups
+  manage_worker_iam_resources  = var.manage_worker_iam_resources
+  node_groups_defaults         = local.node_groups_defaults
+  node_groups                  = var.node_groups
+  worker_create_security_group = var.node_create_security_group
+  worker_security_group_id     = var.node_security_group_id
 
   # Aws auth & kubeconfig
   manage_aws_auth  = false
