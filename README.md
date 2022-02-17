@@ -138,11 +138,13 @@ module "my_vpc" {
 | <a name="input_kms_etcd"></a> [kms\_etcd](#input\_kms\_etcd) | KMS key ARN for etcd encryption | `string` | `null` | no |
 | <a name="input_manage_cluster_iam_resources"></a> [manage\_cluster\_iam\_resources](#input\_manage\_cluster\_iam\_resources) | Whether to let the module manage cluster IAM resources. If set to false, cluster\_iam\_role\_name must be specified. | `bool` | `true` | no |
 | <a name="input_manage_worker_iam_resources"></a> [manage\_worker\_iam\_resources](#input\_manage\_worker\_iam\_resources) | Whether to let the module manage worker IAM resources. If set to false, iam\_role\_arn must be specified for nodes. | `bool` | `true` | no |
+| <a name="input_node_create_security_group"></a> [node\_create\_security\_group](#input\_node\_create\_security\_group) | Whether to create a security group for the workers or attach the workers to `worker_security_group_id`. | `bool` | `true` | no |
 | <a name="input_node_group_ami_id"></a> [node\_group\_ami\_id](#input\_node\_group\_ami\_id) | ID of the AMI to use on the EKS Nodes | `string` | `null` | no |
 | <a name="input_node_group_ami_type"></a> [node\_group\_ami\_type](#input\_node\_group\_ami\_type) | AMI type for EKS Nodes | `string` | `null` | no |
 | <a name="input_node_group_disk_size"></a> [node\_group\_disk\_size](#input\_node\_group\_disk\_size) | EBS disk size for node group | `number` | `20` | no |
 | <a name="input_node_group_iam_role_arn"></a> [node\_group\_iam\_role\_arn](#input\_node\_group\_iam\_role\_arn) | IAM role ARN for workers | `string` | `null` | no |
 | <a name="input_node_groups"></a> [node\_groups](#input\_node\_groups) | Map of map of node groups to create. See `node_groups` module's documentation for more details | `any` | `{}` | no |
+| <a name="input_node_security_group_id"></a> [node\_security\_group\_id](#input\_node\_security\_group\_id) | If provided, all workers will be attached to this security group. If not given, a security group will be created with necessary ingress/egress to work with the EKS cluster. | `string` | `""` | no |
 | <a name="input_service_ipv4_cidr"></a> [service\_ipv4\_cidr](#input\_service\_ipv4\_cidr) | service ipv4 cidr for the kubernetes cluster | `string` | `null` | no |
 | <a name="input_subnets"></a> [subnets](#input\_subnets) | A list of subnets to place the EKS cluster and workers within. | `list(string)` | `[]` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | A map of tags to add to all resources. Tags added to launch configuration or templates override these values for ASG Tags only. | `map(string)` | `{}` | no |
