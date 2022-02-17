@@ -18,16 +18,10 @@ variable "cluster_version" {
   type        = string
 }
 
-variable "manage_cluster_iam_resources" {
-  description = "Whether to let the module manage cluster IAM resources. If set to false, cluster_iam_role_name must be specified."
-  type        = bool
-  default     = true
-}
-
-variable "cluster_iam_role_name" {
-  description = "IAM role name for the cluster. If manage_cluster_iam_resources is set to false, set this to reuse an existing IAM role. If manage_cluster_iam_resources is set to true, set this to force the created role name."
+variable "iam_role_arn" {
+  description = "IAM role name for the cluster."
   type        = string
-  default     = ""
+  default     = null
 }
 
 #### Logging
@@ -35,6 +29,18 @@ variable "cluster_enabled_log_types" {
   description = "A list of the desired control plane logging to enable. For more information, see Amazon EKS Control Plane Logging documentation (https://docs.aws.amazon.com/eks/latest/userguide/control-plane-logs.html)"
   type        = list(string)
   default     = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
+}
+
+variable "cloudwatch_log_group_kms_key_id" {
+  description = "KMS key used to encrypt the cluster Cloudwatch logs"
+  type        = string
+  default     = ""
+}
+
+variable "cloudwatch_log_group_retention_in_days" {
+  description = "Retention duration in days of the cluster Cloudwatch logs"
+  type        = number
+  default     = 90
 }
 
 #### Endpoints
@@ -59,8 +65,8 @@ variable "vpc_id" {
   description = "VPC ID for EKS"
   type        = string
 }
-variable "subnets" {
-  description = "A list of subnets to place the EKS cluster and workers within."
+variable "subnet_ids" {
+  description = "A list of subnet IDs to place the EKS cluster and workers within."
   type        = list(string)
   default     = []
 }
@@ -70,8 +76,20 @@ variable "service_ipv4_cidr" {
   default     = null
 }
 
+#### IAM
+variable "create_iam_role" {
+  description = "Determines whether a an IAM role is created or to use an existing IAM role"
+  type        = bool
+  default     = true
+}
+variable "iam_role_use_name_prefix" {
+  description = "Determines whether the IAM role name (`iam_role_name`) is used as a prefix"
+  type        = string
+  default     = true
+}
+
 #### Security groups
-variable "cluster_create_security_group" {
+variable "create_cluster_security_group" {
   description = "Indicate wether a new security group must be created or not"
   type        = bool
   default     = true
@@ -83,13 +101,32 @@ variable "cluster_security_group_id" {
   default     = ""
 }
 
-variable "worker_additional_security_group_ids" {
-  description = "A list of additional security group ids to attach to worker instances	"
-  type        = list(string)
-  default     = []
+variable "cluster_security_group_additional_rules" {
+  description = "List of additional security group rules to add to the cluster security group created. Set `source_node_security_group = true` inside rules to set the `node_security_group` as source"
+  type        = any
+  default     = {}
 }
+
+variable "create_node_security_group" {
+  description = "Whether to create a security group for the workers or attach the workers to `worker_security_group_id`."
+  type        = bool
+  default     = true
+}
+
+variable "node_security_group_id" {
+  description = "If provided, all workers will be attached to this security group. If not given, a security group will be created with necessary ingress/egress to work with the EKS cluster."
+  type        = string
+  default     = ""
+}
+
 #### Secret encryption
-variable "kms_etcd" {
+variable "enable_secrets_encryption" {
+  description = "Enable secret encryption with a KMS key"
+  type        = bool
+  default     = true
+}
+
+variable "etcd_kms_arn" {
   description = "KMS key ARN for etcd encryption"
   type        = string
   default     = null
@@ -124,10 +161,10 @@ variable "node_groups" {
   default     = {}
 }
 
-variable "manage_worker_iam_resources" {
-  description = "Whether to let the module manage worker IAM resources. If set to false, iam_role_arn must be specified for nodes."
-  type        = bool
-  default     = true
+variable "custom_node_group_defaults" {
+  description = "Map of custom default parameters for node groups"
+  type        = any
+  default     = {}
 }
 
 #### Tags rulez the world
