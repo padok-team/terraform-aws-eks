@@ -37,6 +37,18 @@ variable "cluster_enabled_log_types" {
   default     = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
 }
 
+variable "cluster_log_kms_key_id" {
+  description = "KMS key used to encrypt the cluster Cloudwatch logs"
+  type        = string
+  default     = ""
+}
+
+variable "cluster_log_retention_in_days" {
+  description = "Retention duration in days of the cluster Cloudwatch logs"
+  type        = number
+  default     = 90
+}
+
 #### Endpoints
 variable "cluster_endpoint_public_access" {
   description = "Enable API Server public endpoint"
@@ -102,6 +114,12 @@ variable "worker_additional_security_group_ids" {
 }
 
 #### Secret encryption
+variable "enable_secret_encryption" {
+  description = "Enable secret encryption with a KMS key"
+  type        = bool
+  default     = true
+}
+
 variable "kms_etcd" {
   description = "KMS key ARN for etcd encryption"
   type        = string

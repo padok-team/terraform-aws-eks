@@ -13,8 +13,10 @@ module "this" {
   manage_cluster_iam_resources = var.manage_cluster_iam_resources
   cluster_iam_role_name        = var.cluster_iam_role_name
 
-  # Control plan logs
-  cluster_enabled_log_types = var.cluster_enabled_log_types
+  # Control plane logs
+  cluster_enabled_log_types     = var.cluster_enabled_log_types
+  cluster_log_kms_key_id        = var.cluster_log_kms_key_id
+  cluster_log_retention_in_days = var.cluster_log_retention_in_days
 
   # Network config
   vpc_id                               = var.vpc_id
@@ -32,12 +34,12 @@ module "this" {
   cluster_endpoint_public_access  = var.cluster_endpoint_public_access
 
   # secret encryption
-  cluster_encryption_config = [
+  cluster_encryption_config = var.enable_secret_encryption ? [
     {
       provider_key_arn = local.etcd_kms
       resources        = ["secrets"]
     }
-  ]
+  ] : []
 
   # IRSA
   enable_irsa = true
@@ -62,11 +64,11 @@ module "this" {
 ################################################################################
 
 locals {
-  etcd_kms = var.kms_etcd != null ? var.kms_etcd : aws_kms_key.this[0].arn
+  etcd_kms = var.kms_etcd != null || ! var.enable_secret_encryption ? var.kms_etcd : aws_kms_key.this[0].arn
 }
 
 resource "aws_kms_key" "this" {
-  count = var.kms_etcd != null ? 0 : 1
+  count = var.kms_etcd != null || ! var.enable_secret_encryption ? 0 : 1
 
   description             = "EKS Secret Encryption Key"
   deletion_window_in_days = 7
