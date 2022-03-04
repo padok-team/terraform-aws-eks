@@ -160,11 +160,11 @@ module "my_vpc" {
 
 ### Inputs for node_groups
 
-[All options available in the sub module](https://github.com/terraform-aws-modules/terraform-aws-eks/tree/master/modules/node_groups)
+Note: once deployed, change on `desired_capacity` will not be reflected in the cluster because we assume that you will use [cluster autoscaler](https://github.com/kubernetes/autoscaler/) to scale the nodes up and down.
 
 ## Outputs
 
-Ouputs are the same than [terraform-aws-modules/eks/aws](https://registry.terraform.io/modules/terraform-aws-modules/eks/aws/latest) module.
+Ouputs are the same than [terraform-aws-modules/eks/aws](https://github.com/terraform-aws-modules/terraform-aws-eks/tree/v17.22.0) module.
 
 ## License
 
