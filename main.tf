@@ -50,7 +50,6 @@ module "this" {
   node_groups                  = var.node_groups
   worker_create_security_group = var.node_create_security_group
   worker_security_group_id     = var.node_security_group_id
-  workers_user_data            = var.node_user_data
 
   # Aws auth & kubeconfig
   manage_aws_auth  = false
@@ -65,11 +64,11 @@ module "this" {
 ################################################################################
 
 locals {
-  etcd_kms = var.kms_etcd != null || ! var.enable_secret_encryption ? var.kms_etcd : aws_kms_key.this[0].arn
+  etcd_kms = var.kms_etcd != null || !var.enable_secret_encryption ? var.kms_etcd : aws_kms_key.this[0].arn
 }
 
 resource "aws_kms_key" "this" {
-  count = var.kms_etcd != null || ! var.enable_secret_encryption ? 0 : 1
+  count = var.kms_etcd != null || !var.enable_secret_encryption ? 0 : 1
 
   description             = "EKS Secret Encryption Key"
   deletion_window_in_days = 7
@@ -81,6 +80,7 @@ locals {
 
     # Force to true to create a launch template to add worker security group to nodes
     create_launch_template = "true"
+    pre_userdata           = var.node_user_data
 
     ami_type  = var.node_group_ami_type
     disk_size = var.node_group_disk_size
