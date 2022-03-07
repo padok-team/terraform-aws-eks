@@ -161,6 +161,12 @@ variable "manage_worker_iam_resources" {
   default     = true
 }
 
+variable "node_user_data" {
+  description = "User data to pass to the nodes."
+  type        = string
+  default     = ""
+}
+
 #### Tags rulez the world
 variable "tags" {
   description = "A map of tags to add to all resources. Tags added to launch configuration or templates override these values for ASG Tags only."

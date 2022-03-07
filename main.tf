@@ -50,6 +50,7 @@ module "this" {
   node_groups                  = var.node_groups
   worker_create_security_group = var.node_create_security_group
   worker_security_group_id     = var.node_security_group_id
+  workers_user_data            = var.node_user_data
 
   # Aws auth & kubeconfig
   manage_aws_auth  = false
