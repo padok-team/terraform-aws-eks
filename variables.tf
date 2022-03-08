@@ -24,7 +24,7 @@ variable "manage_cluster_iam_resources" {
   default     = true
 }
 
-variable "cluster_iam_role_name" {
+variable "iam_role_arn" {
   description = "IAM role name for the cluster. If manage_cluster_iam_resources is set to false, set this to reuse an existing IAM role. If manage_cluster_iam_resources is set to true, set this to force the created role name."
   type        = string
   default     = ""

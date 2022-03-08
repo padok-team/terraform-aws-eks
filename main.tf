@@ -3,31 +3,30 @@
 ################################################################################
 
 module "this" {
-  source  = "terraform-aws-modules/eks/aws"
-  version = "17.22.0"
+  source = "git@github.com:padok-team/terraform-aws-eks-community.git?ref=fix/prefix_separator_launch_templates"
 
-  create_eks      = true
+  create          = true
   cluster_name    = var.cluster_name
   cluster_version = var.cluster_version
 
-  manage_cluster_iam_resources = var.manage_cluster_iam_resources
-  cluster_iam_role_name        = var.cluster_iam_role_name
+  create_iam_role          = false
+  iam_role_arn             = var.iam_role_arn
+  iam_role_use_name_prefix = false
 
   # Control plane logs
-  cluster_enabled_log_types     = var.cluster_enabled_log_types
-  cluster_log_kms_key_id        = var.cluster_log_kms_key_id
-  cluster_log_retention_in_days = var.cluster_log_retention_in_days
+  cluster_enabled_log_types              = var.cluster_enabled_log_types
+  cloudwatch_log_group_kms_key_id        = var.cluster_log_kms_key_id
+  cloudwatch_log_group_retention_in_days = var.cluster_log_retention_in_days
 
   # Network config
   vpc_id                               = var.vpc_id
-  subnets                              = var.subnets
+  subnet_ids                           = var.subnets
   cluster_service_ipv4_cidr            = var.service_ipv4_cidr
   cluster_endpoint_public_access_cidrs = var.cluster_endpoint_public_access_cidrs
 
   # Security groups
-  cluster_create_security_group        = var.cluster_create_security_group
-  cluster_security_group_id            = var.cluster_security_group_id
-  worker_additional_security_group_ids = var.worker_additional_security_group_ids
+  create_cluster_security_group = var.cluster_create_security_group
+  cluster_security_group_id     = var.cluster_security_group_id
 
   # Endpoint config
   cluster_endpoint_private_access = var.cluster_endpoint_private_access
@@ -45,15 +44,12 @@ module "this" {
   enable_irsa = true
 
   # Managed Node Groups
-  manage_worker_iam_resources  = var.manage_worker_iam_resources
-  node_groups_defaults         = local.node_groups_defaults
-  node_groups                  = var.node_groups
-  worker_create_security_group = var.node_create_security_group
-  worker_security_group_id     = var.node_security_group_id
+  eks_managed_node_group_defaults = local.node_groups_defaults
+  eks_managed_node_groups         = var.node_groups
+  create_node_security_group      = var.node_create_security_group
+  node_security_group_id          = var.node_security_group_id
 
-  # Aws auth & kubeconfig
-  manage_aws_auth  = false
-  write_kubeconfig = false
+  prefix_separator = ""
 
   # Tagging
   tags = var.tags
@@ -79,8 +75,12 @@ locals {
   node_groups_defaults = merge({
 
     # Force to true to create a launch template to add worker security group to nodes
-    create_launch_template = "true"
-    pre_userdata           = var.node_user_data
+    create_launch_template     = true
+    create_iam_role            = false
+    create_security_group      = false
+    iam_role_use_name_prefix   = false
+    use_name_prefix            = false
+    enable_bootstrap_user_data = true
 
     ami_type  = var.node_group_ami_type
     disk_size = var.node_group_disk_size
