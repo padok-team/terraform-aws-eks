@@ -53,15 +53,15 @@ module "my_eks" {
   cluster_version                      = "1.21"
   service_ipv4_cidr                    = "10.143.0.0/16"
   vpc_id                               = module.my_vpc.vpc_id
-  subnets                              = module.my_vpc.private_subnets_id
+  subnet_ids                              = module.my_vpc.private_subnet_ids_id
   cluster_endpoint_public_access       = true                 # private access is enable by default
   cluster_endpoint_public_access_cidrs = # restrict to your public IP, need to provide a list
 
   node_groups = {
     app = {
-      desired_capacity = 1
-      max_capacity     = 5
-      min_capacity     = 1
+      desired_size = 1
+      max_size     = 5
+      min_size     = 1
       instance_types   = ["t3a.medium"]
     }
   }
@@ -90,7 +90,7 @@ module "my_vpc" {
   vpc_availability_zone = ["eu-west-3a", "eu-west-3b"]
 
   vpc_cidr            = "10.142.0.0/16"
-  public_subnet_cidr  = ["10.142.1.0/28", "10.142.2.0/28"]    # small subnets for natgateway
+  public_subnet_cidr  = ["10.142.1.0/28", "10.142.2.0/28"]    # small subnet_ids for natgateway
   private_subnet_cidr = ["10.142.64.0/18", "10.142.128.0/18"] # big subnet for EKS
 
   private_subnet_tags = {
@@ -118,7 +118,7 @@ module "my_vpc" {
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_this"></a> [this](#module\_this) | terraform-aws-modules/eks/aws | 17.22.0 |
+| <a name="module_this"></a> [this](#module\_this) | git@github.com:padok-team/terraform-aws-eks-community.git | fix/prefix_separator_launch_templates |
 
 ## Inputs
 
@@ -129,16 +129,19 @@ module "my_vpc" {
 | <a name="input_env"></a> [env](#input\_env) | Environment name | `string` | n/a | yes |
 | <a name="input_region"></a> [region](#input\_region) | AWS region name | `string` | n/a | yes |
 | <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | VPC ID for EKS | `string` | n/a | yes |
-| <a name="input_cluster_create_security_group"></a> [cluster\_create\_security\_group](#input\_cluster\_create\_security\_group) | Indicate wether a new security group must be created or not | `bool` | `true` | no |
+| <a name="input_cloudwatch_log_group_kms_key_id"></a> [cloudwatch\_log\_group\_kms\_key\_id](#input\_cloudwatch\_log\_group\_kms\_key\_id) | KMS key used to encrypt the cluster Cloudwatch logs | `string` | `""` | no |
+| <a name="input_cloudwatch_log_group_retention_in_days"></a> [cloudwatch\_log\_group\_retention\_in\_days](#input\_cloudwatch\_log\_group\_retention\_in\_days) | Retention duration in days of the cluster Cloudwatch logs | `number` | `90` | no |
 | <a name="input_cluster_enabled_log_types"></a> [cluster\_enabled\_log\_types](#input\_cluster\_enabled\_log\_types) | A list of the desired control plane logging to enable. For more information, see Amazon EKS Control Plane Logging documentation (https://docs.aws.amazon.com/eks/latest/userguide/control-plane-logs.html) | `list(string)` | <pre>[<br>  "api",<br>  "audit",<br>  "authenticator",<br>  "controllerManager",<br>  "scheduler"<br>]</pre> | no |
 | <a name="input_cluster_endpoint_private_access"></a> [cluster\_endpoint\_private\_access](#input\_cluster\_endpoint\_private\_access) | Enable API Server private endpoint | `bool` | `true` | no |
 | <a name="input_cluster_endpoint_public_access"></a> [cluster\_endpoint\_public\_access](#input\_cluster\_endpoint\_public\_access) | Enable API Server public endpoint | `bool` | `false` | no |
 | <a name="input_cluster_endpoint_public_access_cidrs"></a> [cluster\_endpoint\_public\_access\_cidrs](#input\_cluster\_endpoint\_public\_access\_cidrs) | List of CIDR blocks which can access the Amazon EKS public API server endpoint. | `list(string)` | <pre>[<br>  "0.0.0.0/0"<br>]</pre> | no |
-| <a name="input_cluster_iam_role_name"></a> [cluster\_iam\_role\_name](#input\_cluster\_iam\_role\_name) | IAM role name for the cluster. If manage\_cluster\_iam\_resources is set to false, set this to reuse an existing IAM role. If manage\_cluster\_iam\_resources is set to true, set this to force the created role name. | `string` | `""` | no |
 | <a name="input_cluster_security_group_id"></a> [cluster\_security\_group\_id](#input\_cluster\_security\_group\_id) | If provided, the EKS cluster will be attached to this security group. If not given, a security group will be created with necessary ingress/egress to work with the workers | `string` | `""` | no |
+| <a name="input_create_cluster_security_group"></a> [create\_cluster\_security\_group](#input\_create\_cluster\_security\_group) | Indicate wether a new security group must be created or not | `bool` | `true` | no |
+| <a name="input_custom_node_group_defaults"></a> [custom\_node\_group\_defaults](#input\_custom\_node\_group\_defaults) | Map of custom default parameters for node groups | `any` | `{}` | no |
+| <a name="input_enable_secrets_encryption"></a> [enable\_secrets\_encryption](#input\_enable\_secrets\_encryption) | Enable secret encryption with a KMS key | `bool` | `true` | no |
+| <a name="input_iam_role_arn"></a> [iam\_role\_arn](#input\_iam\_role\_arn) | IAM role name for the cluster. If manage\_cluster\_iam\_resources is set to false, set this to reuse an existing IAM role. If manage\_cluster\_iam\_resources is set to true, set this to force the created role name. | `string` | `""` | no |
 | <a name="input_kms_etcd"></a> [kms\_etcd](#input\_kms\_etcd) | KMS key ARN for etcd encryption | `string` | `null` | no |
 | <a name="input_manage_cluster_iam_resources"></a> [manage\_cluster\_iam\_resources](#input\_manage\_cluster\_iam\_resources) | Whether to let the module manage cluster IAM resources. If set to false, cluster\_iam\_role\_name must be specified. | `bool` | `true` | no |
-| <a name="input_manage_worker_iam_resources"></a> [manage\_worker\_iam\_resources](#input\_manage\_worker\_iam\_resources) | Whether to let the module manage worker IAM resources. If set to false, iam\_role\_arn must be specified for nodes. | `bool` | `true` | no |
 | <a name="input_node_create_security_group"></a> [node\_create\_security\_group](#input\_node\_create\_security\_group) | Whether to create a security group for the workers or attach the workers to `worker_security_group_id`. | `bool` | `true` | no |
 | <a name="input_node_group_ami_id"></a> [node\_group\_ami\_id](#input\_node\_group\_ami\_id) | ID of the AMI to use on the EKS Nodes | `string` | `null` | no |
 | <a name="input_node_group_ami_type"></a> [node\_group\_ami\_type](#input\_node\_group\_ami\_type) | AMI type for EKS Nodes | `string` | `null` | no |
@@ -146,8 +149,9 @@ module "my_vpc" {
 | <a name="input_node_group_iam_role_arn"></a> [node\_group\_iam\_role\_arn](#input\_node\_group\_iam\_role\_arn) | IAM role ARN for workers | `string` | `null` | no |
 | <a name="input_node_groups"></a> [node\_groups](#input\_node\_groups) | Map of map of node groups to create. See `node_groups` module's documentation for more details | `any` | `{}` | no |
 | <a name="input_node_security_group_id"></a> [node\_security\_group\_id](#input\_node\_security\_group\_id) | If provided, all workers will be attached to this security group. If not given, a security group will be created with necessary ingress/egress to work with the EKS cluster. | `string` | `""` | no |
+| <a name="input_prefix_separator"></a> [prefix\_separator](#input\_prefix\_separator) | Prefix separator used when prefix use is enabled for resource naming. Use it to ensure compatibility with resources created with the v17 of the community module. | `string` | `"-"` | no |
 | <a name="input_service_ipv4_cidr"></a> [service\_ipv4\_cidr](#input\_service\_ipv4\_cidr) | service ipv4 cidr for the kubernetes cluster | `string` | `null` | no |
-| <a name="input_subnets"></a> [subnets](#input\_subnets) | A list of subnets to place the EKS cluster and workers within. | `list(string)` | `[]` | no |
+| <a name="input_subnet_ids"></a> [subnet\_ids](#input\_subnet\_ids) | A list of subnet IDs to place the EKS cluster and workers within. | `list(string)` | `[]` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | A map of tags to add to all resources. Tags added to launch configuration or templates override these values for ASG Tags only. | `map(string)` | `{}` | no |
 | <a name="input_worker_additional_security_group_ids"></a> [worker\_additional\_security\_group\_ids](#input\_worker\_additional\_security\_group\_ids) | A list of additional security group ids to attach to worker instances. | `list(string)` | `[]` | no |
 
