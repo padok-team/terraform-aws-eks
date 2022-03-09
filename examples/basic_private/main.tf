@@ -42,7 +42,7 @@ module "my_eks" {
   cluster_version   = "1.21"
   service_ipv4_cidr = "10.143.0.0/16"
   vpc_id            = module.my_vpc.vpc_id
-  subnet_ids        = module.my_vpc.private_subnet_ids_ids
+  subnet_ids        = module.my_vpc.private_subnets_ids
 
   node_groups = {
     app = {
@@ -81,7 +81,7 @@ module "my_vpc" {
   vpc_availability_zone = ["eu-west-3a", "eu-west-3b"]
 
   vpc_cidr            = "10.142.0.0/16"
-  public_subnet_cidr  = ["10.142.1.0/28", "10.142.2.0/28"]    # small subnet_ids for natgateway
+  public_subnet_cidr  = ["10.142.1.0/28", "10.142.2.0/28"]    # small subnets for natgateway
   private_subnet_cidr = ["10.142.64.0/18", "10.142.128.0/18"] # big subnet for EKS
 
   single_nat_gateway = true # warning : not for production !

@@ -24,14 +24,8 @@ variable "cluster_version" {
   type        = string
 }
 
-variable "manage_cluster_iam_resources" {
-  description = "Whether to let the module manage cluster IAM resources. If set to false, cluster_iam_role_name must be specified."
-  type        = bool
-  default     = true
-}
-
 variable "iam_role_arn" {
-  description = "IAM role name for the cluster. If manage_cluster_iam_resources is set to false, set this to reuse an existing IAM role. If manage_cluster_iam_resources is set to true, set this to force the created role name."
+  description = "IAM role name for the cluster."
   type        = string
   default     = ""
 }

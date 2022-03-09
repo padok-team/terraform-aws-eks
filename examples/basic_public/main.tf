@@ -40,7 +40,7 @@ module "my_eks" {
   cluster_version                      = "1.21"
   service_ipv4_cidr                    = "10.143.0.0/16"
   vpc_id                               = module.my_vpc.vpc_id
-  subnet_ids                           = module.my_vpc.private_subnet_ids_ids
+  subnet_ids                           = module.my_vpc.private_subnets_ids
   cluster_endpoint_public_access       = true                 # private access is enable by default
   cluster_endpoint_public_access_cidrs = ["46.193.107.14/32"] # restrict to your public IP
 

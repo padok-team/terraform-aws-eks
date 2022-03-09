@@ -53,7 +53,7 @@ module "my_eks" {
   cluster_version                      = "1.21"
   service_ipv4_cidr                    = "10.143.0.0/16"
   vpc_id                               = module.my_vpc.vpc_id
-  subnet_ids                              = module.my_vpc.private_subnet_ids_id
+  subnet_ids                              = module.my_vpc.private_subnets_ids_id
   cluster_endpoint_public_access       = true                 # private access is enable by default
   cluster_endpoint_public_access_cidrs = # restrict to your public IP, need to provide a list
 
@@ -90,7 +90,7 @@ module "my_vpc" {
   vpc_availability_zone = ["eu-west-3a", "eu-west-3b"]
 
   vpc_cidr            = "10.142.0.0/16"
-  public_subnet_cidr  = ["10.142.1.0/28", "10.142.2.0/28"]    # small subnet_ids for natgateway
+  public_subnet_cidr  = ["10.142.1.0/28", "10.142.2.0/28"]    # small subnet for natgateway
   private_subnet_cidr = ["10.142.64.0/18", "10.142.128.0/18"] # big subnet for EKS
 
   private_subnet_tags = {
@@ -139,9 +139,8 @@ module "my_vpc" {
 | <a name="input_create_cluster_security_group"></a> [create\_cluster\_security\_group](#input\_create\_cluster\_security\_group) | Indicate wether a new security group must be created or not | `bool` | `true` | no |
 | <a name="input_custom_node_group_defaults"></a> [custom\_node\_group\_defaults](#input\_custom\_node\_group\_defaults) | Map of custom default parameters for node groups | `any` | `{}` | no |
 | <a name="input_enable_secrets_encryption"></a> [enable\_secrets\_encryption](#input\_enable\_secrets\_encryption) | Enable secret encryption with a KMS key | `bool` | `true` | no |
-| <a name="input_iam_role_arn"></a> [iam\_role\_arn](#input\_iam\_role\_arn) | IAM role name for the cluster. If manage\_cluster\_iam\_resources is set to false, set this to reuse an existing IAM role. If manage\_cluster\_iam\_resources is set to true, set this to force the created role name. | `string` | `""` | no |
+| <a name="input_iam_role_arn"></a> [iam\_role\_arn](#input\_iam\_role\_arn) | IAM role name for the cluster. | `string` | `""` | no |
 | <a name="input_kms_etcd"></a> [kms\_etcd](#input\_kms\_etcd) | KMS key ARN for etcd encryption | `string` | `null` | no |
-| <a name="input_manage_cluster_iam_resources"></a> [manage\_cluster\_iam\_resources](#input\_manage\_cluster\_iam\_resources) | Whether to let the module manage cluster IAM resources. If set to false, cluster\_iam\_role\_name must be specified. | `bool` | `true` | no |
 | <a name="input_node_create_security_group"></a> [node\_create\_security\_group](#input\_node\_create\_security\_group) | Whether to create a security group for the workers or attach the workers to `worker_security_group_id`. | `bool` | `true` | no |
 | <a name="input_node_group_ami_id"></a> [node\_group\_ami\_id](#input\_node\_group\_ami\_id) | ID of the AMI to use on the EKS Nodes | `string` | `null` | no |
 | <a name="input_node_group_ami_type"></a> [node\_group\_ami\_type](#input\_node\_group\_ami\_type) | AMI type for EKS Nodes | `string` | `null` | no |
