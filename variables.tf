@@ -8,6 +8,12 @@ variable "region" {
   type        = string
 }
 
+variable "prefix_separator" {
+  description = "Prefix separator used when prefix use is enabled for resource naming. Use it to ensure compatibility with resources created with the v17 of the community module."
+  type        = string
+  default     = "-"
+}
+
 #### ---- ---- ---- EKS ---- ---- ---- ####
 variable "cluster_name" {
   description = "Name of the EKS cluster"
@@ -37,13 +43,13 @@ variable "cluster_enabled_log_types" {
   default     = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
 }
 
-variable "cluster_log_kms_key_id" {
+variable "cloudwatch_log_group_kms_key_id" {
   description = "KMS key used to encrypt the cluster Cloudwatch logs"
   type        = string
   default     = ""
 }
 
-variable "cluster_log_retention_in_days" {
+variable "cloudwatch_log_group_retention_in_days" {
   description = "Retention duration in days of the cluster Cloudwatch logs"
   type        = number
   default     = 90
@@ -71,8 +77,8 @@ variable "vpc_id" {
   description = "VPC ID for EKS"
   type        = string
 }
-variable "subnets" {
-  description = "A list of subnets to place the EKS cluster and workers within."
+variable "subnet_ids" {
+  description = "A list of subnet IDs to place the EKS cluster and workers within."
   type        = list(string)
   default     = []
 }
@@ -83,7 +89,7 @@ variable "service_ipv4_cidr" {
 }
 
 #### Security groups
-variable "cluster_create_security_group" {
+variable "create_cluster_security_group" {
   description = "Indicate wether a new security group must be created or not"
   type        = bool
   default     = true
@@ -114,7 +120,7 @@ variable "worker_additional_security_group_ids" {
 }
 
 #### Secret encryption
-variable "enable_secret_encryption" {
+variable "enable_secrets_encryption" {
   description = "Enable secret encryption with a KMS key"
   type        = bool
   default     = true
@@ -155,16 +161,10 @@ variable "node_groups" {
   default     = {}
 }
 
-variable "manage_worker_iam_resources" {
-  description = "Whether to let the module manage worker IAM resources. If set to false, iam_role_arn must be specified for nodes."
-  type        = bool
-  default     = true
-}
-
-variable "node_user_data" {
-  description = "User data to pass to the nodes."
-  type        = string
-  default     = ""
+variable "custom_node_group_defaults" {
+  description = "Map of custom default parameters for node groups"
+  type        = any
+  default     = {}
 }
 
 #### Tags rulez the world
