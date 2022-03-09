@@ -42,16 +42,16 @@ module "my_eks" {
   cluster_version                      = "1.21"
   service_ipv4_cidr                    = "10.143.0.0/16"
   vpc_id                               = module.my_vpc.vpc_id
-  subnets                              = module.my_vpc.private_subnets_ids
+  subnet_ids                           = module.my_vpc.private_subnet_ids_ids
   cluster_endpoint_public_access       = true                 # private access is enable by default
   cluster_endpoint_public_access_cidrs = ["46.193.107.14/32"] # restrict to your public IP
 
   node_groups = {
     pool_api = {
-      desired_capacity = 2
-      max_capacity     = 10
-      min_capacity     = 1
-      instance_types   = ["c5a.xlarge"]
+      desired_size   = 2
+      max_size       = 10
+      min_size       = 1
+      instance_types = ["c5a.xlarge"]
 
       # taint and labels for deployment, sts, etc
       k8s_labels = {
@@ -73,10 +73,10 @@ module "my_eks" {
       }
     },
     pool_back = {
-      desired_capacity = 2
-      max_capacity     = 7
-      min_capacity     = 1
-      instance_types   = ["r5a.xlarge"]
+      desired_size   = 2
+      max_size       = 7
+      min_size       = 1
+      instance_types = ["r5a.xlarge"]
 
       # taint and labels for deployment, sts, etc
       k8s_labels = {
