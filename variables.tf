@@ -173,3 +173,27 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
+
+#### Cluster Autoscaler
+
+variable "cluster_autoscaler_arn_identifier" {
+  description = "Name of the cluster autoscaler ARN identifier"
+  type        = string
+  default     = "cluster-autoscaler-aws-cluster-autoscaler"
+}
+
+#### External DNS
+
+variable "external_dns_arn_identifier" {
+  description = "Name of the external DNS ARN identifier"
+  type        = string
+  default     = "external-dns"
+}
+
+#### External Secret
+
+variable "external_secret_arn_identifier" {
+  description = "Name of the external secret ARN identifier"
+  type        = string
+  default     = "external-secret"
+}

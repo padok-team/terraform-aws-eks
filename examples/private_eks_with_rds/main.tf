@@ -39,7 +39,7 @@ module "my_eks" {
   env               = local.env
   region            = local.region
   cluster_name      = local.name
-  cluster_version   = "1.21"
+  cluster_version   = "1.22"
   service_ipv4_cidr = "10.143.0.0/16"
   vpc_id            = module.my_vpc.vpc_id
   subnet_ids        = module.my_vpc.private_subnets_ids
@@ -72,6 +72,16 @@ module "my_eks" {
 
 output "my_cluster" {
   value = module.my_eks.this
+}
+
+output "external_dns_role_arn" {
+  value = module.my_eks.external_dns_role_arn
+}
+output "external_secret_role_arn" {
+  value = module.my_eks.external_secret_role_arn
+}
+output "cluster_autoscaler_role_arn" {
+  value = module.my_eks.cluster_autoscaler_role_arn
 }
 
 module "rds" {

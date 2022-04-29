@@ -35,12 +35,12 @@ module "my_eks" {
   env                                  = local.env
   region                               = local.region
   cluster_name                         = local.name
-  cluster_version                      = "1.21"
+  cluster_version                      = "1.22"
   service_ipv4_cidr                    = "10.143.0.0/16"
   vpc_id                               = module.my_vpc.vpc_id
   subnet_ids                           = module.my_vpc.private_subnets_ids
   cluster_endpoint_public_access       = true                 # private access is enable by default
-  cluster_endpoint_public_access_cidrs = ["46.193.107.14/32"] # restrict to your public IP
+  cluster_endpoint_public_access_cidrs = ["78.196.83.173/32"] # restrict to your public IP
 
   #create_iam_role = false
 
@@ -60,6 +60,16 @@ module "my_eks" {
 
 output "my_cluster" {
   value = module.my_eks.this
+}
+
+output "external_dns_role_arn" {
+  value = module.my_eks.external_dns_role_arn
+}
+output "external_secret_role_arn" {
+  value = module.my_eks.external_secret_role_arn
+}
+output "cluster_autoscaler_role_arn" {
+  value = module.my_eks.cluster_autoscaler_role_arn
 }
 
 ################################################################################
