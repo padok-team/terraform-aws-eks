@@ -4,7 +4,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = ">= 3.63"
+      version = ">= 3.63.0, < 4.0.0"
     }
   }
 }
@@ -38,40 +38,31 @@ module "my_eks" {
 
   env             = local.env
   region          = local.region
-  cluster_name    = local.name # cluster name result will be => ${local.name}_${local.env}
+  cluster_name    = local.name
   cluster_version = "1.21"
 
-  manage_cluster_iam_resources = false
-  cluster_iam_role_name        = "custom_eks_cluster_role"
+  iam_role_name = "custom_eks_cluster_role"
 
   service_ipv4_cidr = "10.143.0.0/16"
   vpc_id            = module.my_vpc.vpc_id
-  subnets           = module.my_vpc.private_subnets_ids
+  subnet_ids        = module.my_vpc.private_subnets_ids
 
   cluster_endpoint_public_access_cidrs = ["46.193.107.14/32"]
 
   node_groups = {
     app = {
-      desired_capacity = 1
-      max_capacity     = 5
-      min_capacity     = 1
-      instance_types   = ["t3a.medium"]
+      desired_size   = 1
+      max_size       = 5
+      min_size       = 1
+      instance_types = ["t3a.medium"]
     }
   }
-  manage_worker_iam_resources = false
-  node_group_iam_role_arn     = "arn:aws:iam::334033969502:role/custom_eks_nodes_roles"
+
+  node_group_iam_role_arn = "arn:aws:iam::334033969502:role/custom_eks_nodes_roles"
 
   tags = {
     CostCenter = "EKS"
   }
-
-  # ⚠️ Very important note ⚠️
-  # force dependency on vpc because we need natgateway & route table to be up before
-  # starting our node pool because without appriopriate route, node can't talk
-  # to AWS API and can't auth on EKS API Server
-  depends_on = [
-    module.my_vpc
-  ]
 }
 
 output "my_cluster" {
