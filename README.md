@@ -56,7 +56,7 @@ module "my_eks" {
   env                                  = local.env
   region                               = local.region
   cluster_name                         = local.name
-  cluster_version                      = "1.21"
+  cluster_version                      = "1.22"
   service_ipv4_cidr                    = "10.143.0.0/16"
   vpc_id                               = module.my_vpc.vpc_id
   subnet_ids                           = module.my_vpc.private_subnets_ids_id
@@ -104,6 +104,20 @@ module "my_vpc" {
 }
 ```
 
+## Default roles for EKS services
+
+This module create default roles for EKS services:
+
+- Cluster Autoscaler
+- External DNS
+- External Secret
+
+ARNs for created roles are outputed:
+
+- `cluster_autoscaler_role_arn`
+- `external_dns_role_arn`
+- `external_secret_role_arn`
+
 ## Examples
 
 - [A HA Cluster with a public endpoint](examples/basic_public/main.tf)
@@ -132,6 +146,7 @@ module "my_vpc" {
 | <a name="input_vpc_id"></a> [vpc_id](#input_vpc_id)                                                                                                    | VPC ID for EKS                                                                                                                                                                                             | `string`       | n/a                                                                                                     |   yes    |
 | <a name="input_cloudwatch_log_group_kms_key_id"></a> [cloudwatch_log_group_kms_key_id](#input_cloudwatch_log_group_kms_key_id)                         | KMS key used to encrypt the cluster Cloudwatch logs                                                                                                                                                        | `string`       | `""`                                                                                                    |    no    |
 | <a name="input_cloudwatch_log_group_retention_in_days"></a> [cloudwatch_log_group_retention_in_days](#input_cloudwatch_log_group_retention_in_days)    | Retention duration in days of the cluster Cloudwatch logs                                                                                                                                                  | `number`       | `90`                                                                                                    |    no    |
+| <a name="input_cluster_autoscaler_arn_identifier"></a> [cluster_autoscaler_arn_identifier](#input_cluster_autoscaler_arn_identifier)                   | Name of the cluster autoscaler ARN identifier                                                                                                                                                              | `string`       | `"cluster-autoscaler-aws-cluster-autoscaler"`                                                           |    no    |
 | <a name="input_cluster_enabled_log_types"></a> [cluster_enabled_log_types](#input_cluster_enabled_log_types)                                           | A list of the desired control plane logging to enable. For more information, see Amazon EKS Control Plane Logging documentation (https://docs.aws.amazon.com/eks/latest/userguide/control-plane-logs.html) | `list(string)` | <pre>[<br> "api",<br> "audit",<br> "authenticator",<br> "controllerManager",<br> "scheduler"<br>]</pre> |    no    |
 | <a name="input_cluster_endpoint_private_access"></a> [cluster_endpoint_private_access](#input_cluster_endpoint_private_access)                         | Enable API Server private endpoint                                                                                                                                                                         | `bool`         | `true`                                                                                                  |    no    |
 | <a name="input_cluster_endpoint_public_access"></a> [cluster_endpoint_public_access](#input_cluster_endpoint_public_access)                            | Enable API Server public endpoint                                                                                                                                                                          | `bool`         | `false`                                                                                                 |    no    |
@@ -144,6 +159,8 @@ module "my_vpc" {
 | <a name="input_custom_node_group_defaults"></a> [custom_node_group_defaults](#input_custom_node_group_defaults)                                        | Map of custom default parameters for node groups                                                                                                                                                           | `any`          | `{}`                                                                                                    |    no    |
 | <a name="input_enable_secrets_encryption"></a> [enable_secrets_encryption](#input_enable_secrets_encryption)                                           | Enable secret encryption with a KMS key                                                                                                                                                                    | `bool`         | `true`                                                                                                  |    no    |
 | <a name="input_etcd_kms_arn"></a> [etcd_kms_arn](#input_etcd_kms_arn)                                                                                  | KMS key ARN for etcd encryption                                                                                                                                                                            | `string`       | `null`                                                                                                  |    no    |
+| <a name="input_external_dns_arn_identifier"></a> [external_dns_arn_identifier](#input_external_dns_arn_identifier)                                     | Name of the external DNS ARN identifier                                                                                                                                                                    | `string`       | `"external-dns"`                                                                                        |    no    |
+| <a name="input_external_secret_arn_identifier"></a> [external_secret_arn_identifier](#input_external_secret_arn_identifier)                            | Name of the external secret ARN identifier                                                                                                                                                                 | `string`       | `"external-secret"`                                                                                     |    no    |
 | <a name="input_iam_role_arn"></a> [iam_role_arn](#input_iam_role_arn)                                                                                  | IAM role name for the cluster.                                                                                                                                                                             | `string`       | `null`                                                                                                  |    no    |
 | <a name="input_iam_role_use_name_prefix"></a> [iam_role_use_name_prefix](#input_iam_role_use_name_prefix)                                              | Determines whether the IAM role name (`iam_role_name`) is used as a prefix                                                                                                                                 | `string`       | `true`                                                                                                  |    no    |
 | <a name="input_node_group_ami_id"></a> [node_group_ami_id](#input_node_group_ami_id)                                                                   | ID of the AMI to use on the EKS Nodes                                                                                                                                                                      | `string`       | `null`                                                                                                  |    no    |
@@ -158,9 +175,12 @@ module "my_vpc" {
 
 ## Outputs
 
-| Name                                            | Description                |
-| ----------------------------------------------- | -------------------------- |
-| <a name="output_this"></a> [this](#output_this) | All ouputs from the module |
+| Name                                                                                                                 | Description                            |
+| -------------------------------------------------------------------------------------------------------------------- | -------------------------------------- |
+| <a name="output_cluster_autoscaler_role_arn"></a> [cluster_autoscaler_role_arn](#output_cluster_autoscaler_role_arn) | The ARN of the cluster autoscaler role |
+| <a name="output_external_dns_role_arn"></a> [external_dns_role_arn](#output_external_dns_role_arn)                   | The ARN of the external dns role       |
+| <a name="output_external_secret_role_arn"></a> [external_secret_role_arn](#output_external_secret_role_arn)          | The ARN of the external secret role    |
+| <a name="output_this"></a> [this](#output_this)                                                                      | All ouputs from the module             |
 
 <!-- END_TF_DOCS -->
 

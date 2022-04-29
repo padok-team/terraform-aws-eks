@@ -83,3 +83,5 @@ locals {
     var.custom_node_group_defaults
   )
 }
+
+data "aws_caller_identity" "current" {}
