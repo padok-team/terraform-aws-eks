@@ -38,7 +38,7 @@ module "my_eks" {
 
   env             = local.env
   region          = local.region
-  cluster_name    = local.name # cluster name result will be => ${local.name}_${local.env}
+  cluster_name    = local.name
   cluster_version = "1.21"
 
   iam_role_name = "custom_eks_cluster_role"
