@@ -1,0 +1,19 @@
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: terraform-aws-eks
+  description: > 
+    Terraform module which creates EKS resources on AWS. This module is an
+    abstraction of the terraform-aws-modules/eks/aws module by @brandoconnor.
+  tags:
+    - "terraform"
+    - "aws"
+  annotations:
+    github.com/project-slug: padok-team/terraform-aws-eks
+    backstage.io/techdocs-ref: dir:.
+spec:
+  type: module
+  system: terraform
+  owner: library-aws
+  lifecycle: ready-to-use
