@@ -190,7 +190,7 @@ Note: once deployed, change on `desired_size` will not be reflected in the clust
 
 ## Outputs
 
-Ouputs are the same than [terraform-aws-modules/eks/aws](https://github.com/terraform-aws-modules/terraform-aws-eks/tree/v17.22.0) module.
+Ouputs are the same than [terraform-aws-modules/eks/aws](https://github.com/terraform-aws-modules/terraform-aws-eks/tree/v18.17.0) module.
 
 ## License
 
