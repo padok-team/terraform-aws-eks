@@ -4,7 +4,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = ">= 3.63.0, < 4.0.0"
+      version = ">= 4.0.0"
     }
   }
 }
@@ -85,7 +85,7 @@ output "cluster_autoscaler_role_arn" {
 }
 
 module "rds" {
-  source = "git@github.com:padok-team/terraform-aws-rds.git"
+  source = "git@github.com:padok-team/terraform-aws-rds.git?ref=v2.1.0"
 
   ## GENERAL
   identifier = "rds-poc-library-multi-az"
@@ -146,16 +146,11 @@ module "my_vpc" {
 
 # SSM Bastion to connect to EKS trough an SSH tunnel
 module "my_ssm_bastion" {
-  source = "git@github.com:padok-team/terraform-aws-bastion-ssm"
+  source = "git@github.com:padok-team/terraform-aws-bastion-ssm?ref=v2.0.0"
 
   ssm_logging_bucket_name = aws_s3_bucket.ssm_logs.id
   security_groups         = [aws_security_group.bastion_ssm.id]
   vpc_zone_identifier     = module.my_vpc.private_subnets_ids
-}
-
-output "ssm_key" {
-  value     = module.my_ssm_bastion.ssm_private_key
-  sensitive = true
 }
 
 # s3 bucket for logging
