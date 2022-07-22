@@ -4,7 +4,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = ">= 3.63.0, < 4.0.0"
+      version = ">= 4.0.0"
     }
   }
 }
@@ -78,14 +78,30 @@ output "cluster_autoscaler_role_arn" {
 # Supporting resources
 ################################################################################
 
-resource "tls_private_key" "ssh_key" {
-  algorithm = "RSA"
-  rsa_bits  = 4096
+# SSM Bastion to connect to EKS trough an SSH tunnel
+module "my_ssm_bastion" {
+  source = "git@github.com:padok-team/terraform-aws-bastion-ssm?ref=v2.0.0"
+
+  ssm_logging_bucket_name = aws_s3_bucket.ssm_logs.id
+  security_groups         = [aws_security_group.bastion_ssm.id]
+  vpc_zone_identifier     = module.my_vpc.private_subnets_ids
 }
 
-resource "aws_key_pair" "ssh_key" {
-  key_name   = "deployer-key"
-  public_key = tls_private_key.ssh_key.public_key_openssh
+# s3 bucket for logging
+resource "aws_s3_bucket" "ssm_logs" {
+  bucket = "bastion-ssm-logs"
+
+  versioning {
+    enabled = true
+  }
+
+  server_side_encryption_configuration {
+    rule {
+      apply_server_side_encryption_by_default {
+        sse_algorithm = "aws:kms"
+      }
+    }
+  }
 }
 
 module "my_vpc" {
