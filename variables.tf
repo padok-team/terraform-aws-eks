@@ -167,6 +167,13 @@ variable "custom_node_group_defaults" {
   default     = {}
 }
 
+### Aws Auth ConfigMap
+variable "aws_auth_roles" {
+  description = "List of role maps to add to the aws-auth configmap"
+  type        = list(any)
+  default     = []
+}
+
 #### Tags rulez the world
 variable "tags" {
   description = "A map of tags to add to all resources. Tags added to launch configuration or templates override these values for ASG Tags only."
