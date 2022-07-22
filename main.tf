@@ -4,7 +4,7 @@
 
 module "this" {
   source  = "terraform-aws-modules/eks/aws"
-  version = "18.17.0"
+  version = "18.26.6"
 
   create          = true
   cluster_name    = var.cluster_name
@@ -50,6 +50,9 @@ module "this" {
   eks_managed_node_groups         = var.node_groups
   create_node_security_group      = var.create_node_security_group
   node_security_group_id          = var.node_security_group_id
+
+  # Additional roles for aws-auth ConfigMap
+  aws_auth_roles = var.aws_auth_roles
 
   # Tagging
   tags = var.tags

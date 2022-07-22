@@ -60,6 +60,16 @@ module "my_eks" {
 
   node_group_iam_role_arn = "arn:aws:iam::334033969502:role/custom_eks_nodes_roles"
 
+  # List of roles to add to the aws-auth configmap
+
+  # aws_auth_roles = [
+  #   {
+  #     rolearn  = "arn:aws:iam::66666666666:role/role1"
+  #     username = "role1"
+  #     groups   = ["system:masters"]
+  #   },
+  # ]
+
   tags = {
     CostCenter = "EKS"
   }
